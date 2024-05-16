@@ -1,22 +1,26 @@
 on: [push]
 
 jobs:
-  k6_load_test:
-    name: k6 Load Test
+  k6_local_test:
+    name: k6 counter extension run
     runs-on: ubuntu-latest
+    container: docker://golang:1.17-alpine
 
     steps:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Run local k6 test
-        uses: grafana/k6-action@v0.2.0
-        with:
-          filename: script/test.js
-          flags: --out web-dashboard=export=test-result.html
+      - name: Install xk6
+        run: go install go.k6.io/xk6/cmd/xk6@latest
 
+      - name: Build xk6-counter binary
+        run: xk6 build --with github.com/mstoykov/xk6-counter@latest
+
+      - name: Run k6 extension test
+        run: ./k6 run  --out web-dashboard=report=test_result.html script/test.js
+      
       - name: Upload performance test results
         uses: actions/upload-artifact@v3
         with:
           name: k6-report
-          path: test-result.html
+          path: test_result.html
