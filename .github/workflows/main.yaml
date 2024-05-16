@@ -1,32 +1,15 @@
+name: Main Workflow
 on: [push]
-
 jobs:
-  k6_local_test:
-    name: k6 counter extension run
+  build:
+    name: Run k6 test
     runs-on: ubuntu-latest
-    container: docker://golang:1.19-alpine
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: Install xk6
-        run: go install go.k6.io/xk6/cmd/xk6@latest
-
-      - name: Install web-k6-dashboard
-        run: go install github.com/grafana/xk6-dashboard/cmd/k6-web-dashboard@latest
-
-      - name: Build xk6-counter binary
-        run: xk6 build --with github.com/mstoykov/xk6-counter@latest
-
-      - name: Run k6 extension test
-        run: ./k6 run --out json=test-result.json script/test.js
-
-      - name: Generate into html report
-        run: k6-web-dashboard replay --export test-report.html test-result.json
-      
-      - name: Upload performance test results
-        uses: actions/upload-artifact@v3
+        uses: actions/checkout@v4
+      - name: Run k6 cloud test
+        uses: grafana/k6-action@v0.3.1
         with:
-          name: k6-report
-          path: test-report.html
+          filename: script/test.js
+          cloud: true
+          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
