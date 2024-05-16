@@ -13,6 +13,9 @@ jobs:
       - name: Install xk6
         run: go install go.k6.io/xk6/cmd/xk6@latest
 
+      - name: Install web-k6-dashboard
+        run: go install github.com/grafana/xk6-dashboard/cmd/k6-web-dashboard@latest
+
       - name: Build xk6-counter binary
         run: xk6 build --with github.com/mstoykov/xk6-counter@latest
 
