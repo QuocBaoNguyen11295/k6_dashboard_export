@@ -17,7 +17,7 @@ jobs:
         run: xk6 build --with github.com/mstoykov/xk6-counter@latest
 
       - name: Run k6 extension test
-        run: ./k6 run  --out web-dashboard=report=test_result.html script/test.js
+        run: ./k6 run --out dashboard=report=test_result.html script/test.js
       
       - name: Upload performance test results
         uses: actions/upload-artifact@v3
